@@ -1,7 +1,9 @@
 import { Igrac } from "./igrac.js";
+let pomocniKraj = true;
 export class Rezultat
+
 {
-    constructor (brSet1,brSet2,brPoenaSeta1prvog,brPoenaSeta1drugog,brPoenaSeta2prvog,brPoenaSeta2drugog)
+    constructor (brSet1,brSet2,brPoenaSeta1prvog,brPoenaSeta1drugog,brPoenaSeta2prvog,brPoenaSeta2drugog,)
     {
         this.brSet1 = brSet1;
         this.brSet2 = brSet2;
@@ -59,7 +61,7 @@ export class Rezultat
         btn.innerHTML = "+";
         malidiv2.appendChild(btn);
         btn.onclick = (ev) => {
-
+            this.proveriPoene(btn);
             if (this.krajMeca)
                 alert("Mec je gotov");
             else {
@@ -81,60 +83,46 @@ export class Rezultat
                             this.brPoenaSetaprvog = 6;
                             this.brSet1++;
                             this.krajMeca = true;
+                            this.snimiMec();
                         }
                     }
                 }
                 this.azurirajRezultat(btn.parentNode);
             }
-            
         }
         btn = document.createElement("button");
         btn.innerHTML = "+";
         malidiv2.appendChild(btn);
         btn.onclick = (ev) => {
+            this.proveriPoene(btn);
             if (this.krajMeca)
                 alert("Mec je gotov");
-            else{
-                    if(this.trenutniSet == 1) {
-                        this.brPoenaSeta1drugog++;
-                        
-                        if(this.brPoenaSeta1drugog > 5){
+            else {
+                if(this.trenutniSet == 1){ 
+                    this.brPoenaSeta1drugog++;
+                    if(this.brPoenaSeta1drugog > 5){
+                        this.brPoenaSeta1drugog = 6;
+                        this.brSet2++;
+                        this.trenutniSet = 2;
+                        this.brPoenaSeta2prvog = 0;
+                        this.brPoenaSeta2drugog = 0;
+                    
+                    }
+                }
+                else{
+                    if(this.trenutniSet == 2){
+                        this.brPoenaSeta2drugog++;
+                        if(this.brPoenaSeta2drugog > 5){
                             this.brPoenaSeta1drugog = 6;
                             this.brSet2++;
-                            this.trenutniSet = 2;
-                            this.brPoenaSeta2prvog = 0;
-                            this.brPoenaSeta2drugog = 0;
-                        }
-                    }    
-                    else{
-                        if(this.trenutniSet == 2){
-                            this.brPoenaSeta2drugog++;
-                            if(this.brPoenaSeta2drugog > 5){
-                                this.brPoenaSeta2drugog = 6;
-                                this.brSet2++;
-                                this.krajMeca = true;
-                                var rangovi = vratiRangIgraca();
-                                fetch("https://localhost:5001/TeniskiMec/UpisRezultata"+rangovi[0]+rangovi[1],{
-                                 method:"POST",
-                                 headers:{
-                                    "Content-Type":"application/json"
-                                        },
-                                    body: JSON.stringify({
-                                       brset1:this.brset1,
-                                       brset2:this.brSet2,
-                                       brpoenaeta1prvog:this.brPoenaSeta1prvog,
-                                       brpoenaeta1drugog:this.brPoenaSeta1drugog,
-                                       brpoenaeta2prvog:this.brPoenaSeta2prvog,
-                                       brpoenaeta2drugog:this.brPoenaSeta2drugog,
-                                    })
-                                })
-                            }
+                            this.krajMeca = true;
+                            this.snimiMec();
                         }
                     }
-                    this.azurirajRezultat(btn.parentNode);
+                }
+                this.azurirajRezultat(btn.parentNode);
             }
-            this.cont = host;
-            
+         
         }
         malidiv.appendChild(malidiv2);
         btn = document.createElement("button");
@@ -148,6 +136,27 @@ export class Rezultat
 
         
         host.appendChild(divel);
+        
+    }
+
+    SetPomocniKraj(kraj)
+    {
+        pomocniKraj = kraj;     
+    }
+
+    proveriPoene(btn){
+        var rez = btn.parentNode.parentNode;
+        let labr = rez.querySelectorAll("label");
+        if(labr[2].innerHTML === "(0 - 0)" || pomocniKraj !== true){
+            this.brSet1 = 0;
+            this.brSet2 = 0;
+            this.brPoenaSeta1prvog = 0;
+            this.brPoenaSeta1drugog = 0;
+            this.brPoenaSeta2prvog = 0;
+            this.brPoenaSeta2drugog = 0;
+            this.trenutniSet = 1;
+            this.krajMeca = false;
+        }
         
     }
 
@@ -192,6 +201,36 @@ export class Rezultat
 
             }
         }
+    }
+
+    snimiMec()
+    {
+        let sel = document.body.querySelector(".selmec");
+        let id = sel.options[sel.selectedIndex].value;
+        // let labele = document.body.querySelectorAll("label");
+        // let lok = labele[0].innerHTML;
+        // let vremeO = labele[1].innerHTML;
+        fetch("https://localhost:5001/TeniskiMec/IzmeniRezultat/"+id,{
+            method: "PUT",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                brSet1:this.brSet1,
+                brSet2:this.brSet2,
+                brPoenaSeta1prvog:this.brPoenaSeta1prvog,
+                brPoenaSeta1drugog:this.brPoenaSeta1drugog,
+                brPoenaSeta2prvog:this.brPoenaSeta2prvog,
+                brPoenaSeta2drugog:this.brPoenaSeta2drugog,
+                trenutniSet:2,
+                krajMeca:true     
+            })
+        }).then(p => {
+            if (p.ok)
+                alert("Rezultat upisan");
+            else
+                alert("greska");
+        });
     }
 
     obrisiRezultat(dmele)

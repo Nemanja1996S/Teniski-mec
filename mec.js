@@ -150,10 +150,10 @@ export class Mec {
         btn.innerHTML = "Kreiraj";
         btn.onclick = (ev) => {
             this.kreirajaMec(btn);
-            let nekisel = this.container.querySelector(".selmec");
-            let sel = this.container.querySelector(".selobrisi");
-            this.azurirajOpcijeD(sel);
-            this.azurirajOpcijeR(nekisel);
+           // let nekisel = this.container.querySelector(".selmec");
+           // let sel = this.container.querySelector(".selobrisi");
+            //this.azurirajOpcijeD(sel);
+           // this.azurirajOpcijeR(nekisel);
         }
         malidiv.appendChild(btn);
         divKreiraj.appendChild(malidiv);
@@ -187,11 +187,11 @@ export class Mec {
         btn = document.createElement("button");
         btn.innerHTML = "Obrisi mec"
         btn.onclick = (ev) => {
-            var nekisel = this.container.querySelector(".selmec");
+           // var nekisel = this.container.querySelector(".selmec");
             var sel = this.container.querySelector(".selobrisi");
             this.izbrisiMec(sel);
-            this.azurirajOpcijeD(sel);
-            this.azurirajOpcijeR(nekisel);
+            //this.azurirajOpcijeD(sel);
+            //this.azurirajOpcijeR(nekisel);
 
         }
         this.container.appendChild(divObrisi);
@@ -239,7 +239,17 @@ export class Mec {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                vremeOdrzavanja: vremeO
+                vremeOdrzavanja: vremeO,
+                brSet1:0,
+                brSet2:0,
+                brPoenaSeta1prvog:0,
+                brPoenaSeta1drugog:0,
+                brPoenaSeta2prvog:0,
+                brPoenaSeta2drugog:0,
+                trenutniSet:1,
+                krajMeca:false,
+                igrac1:idigr1,
+                igrac2:idigr2
             })
             }).then(p => {
                 if(p.ok)
@@ -252,8 +262,8 @@ export class Mec {
             }).catch(p => {
                 alert("Greška prilikom upisa.");
             });
-            
-
+            var rez = new Rezultat();
+            rez.SetPomocniKraj(false);
         }
         
         
@@ -281,111 +291,107 @@ export class Mec {
                     labela = this.container.querySelector(".lokacija2");
                     labela.innerHTML = data.vremeOdrzavanja;
                     let igraci = this.container.querySelectorAll(".igrac");
-                    
-                    
-                    
-                    let podaci = igraci[0].querySelectorAll(".podaci");
-                    let slika = igraci[0].querySelector(".picture");
-                    podaci[0].innerHTML = data.rezultat.igrac1.imePrezime;
-                    podaci[1].innerHTML = data.rezultat.igrac1.godine;
-                    podaci[2].innerHTML = data.rezultat.igrac1.rang;
-                    slika.src = `slike/${data.rezultat.igrac1.imePrezime}.jpg`;
-                    inime[0].placeholder = data.rezultat.igrac1.imePrezime;
-                    ingod[0].placeholder = data.rezultat.igrac1.godine;
-                    inrang[0].placeholder = data.rezultat.igrac1.rang;
-                    
-                    
-                    
-                    
-                    podaci = igraci[1].querySelectorAll(".podaci");
-                    slika = igraci[1].querySelector(".picture");
-                    podaci[0].innerHTML = data.rezultat.igrac2.imePrezime;
-                    podaci[1].innerHTML = data.rezultat.igrac2.godine;
-                    podaci[2].innerHTML = data.rezultat.igrac2.rang;
-                    slika.src = `slike/${data.rezultat.igrac2.imePrezime}.jpg`;
-                    inime[1].placeholder = data.rezultat.igrac1.imePrezime;
-                    ingod[1].placeholder = data.rezultat.igrac1.godine;
-                    inrang[1].placeholder = data.rezultat.igrac1.rang;
-                    
-                    
-                    
-                    var rez = new Rezultat(data.rezultat.brSet1,data.rezultat.brSet2,data.rezultat.brPoenaSeta1prvog,data.rezultat.brPoenaSeta1drugog,data.rezultat.brPoenaSeta2prvog,data.rezultat.brPoenaSeta2drugog);
-                    
                     let m = this.container.querySelectorAll(".malidiv");
-                    console.log(m);
-                    let domEl = m[0];
+                    let domEl = m[1];
                     let labelePoena = domEl.querySelectorAll("label");
                     let malidivRezultata = domEl.parentNode.childNodes;
                     let labeleRezultata = malidivRezultata[0].querySelectorAll("label");
-                    //console.log(labeleRezultata[1].innerHTML);
-                    //console.log(this.trenutniSet);
-                    if(data.rezultat.krajMeca){
-                        labelePoena[1].innerHTML = `---`;
-                        labeleRezultata[1].innerHTML = `${rez.brSet1} - ${rez.brSet2}`;
-                        labeleRezultata[2].innerHTML = `(${rez.brPoenaSeta1prvog} - ${rez.brPoenaSeta1drugog}) , (${rez.brPoenaSeta2prvog} - ${rez.brPoenaSeta2drugog})`;
-                     }
-                    else {
-                        if(data.rezultat.trenutniSet == 1){
-                        labelePoena[1].innerHTML = `${rez.brPoenaSeta1prvog} - ${rez.brPoenaSeta1drugog}`;
-                        labeleRezultata[1].innerHTML = `${rez.brSet1} - ${this.brSet2}`;
-                        labeleRezultata[2].innerHTML = `(${rez.brPoenaSeta1prvog} - ${rez.brPoenaSeta1drugog})`;
-                     }
-                      else {
-                         labelePoena[1].innerHTML = `${rez.brPoenaSeta2prvog} - ${rez.brPoenaSeta2drugog}`;
-                         labeleRezultata[1].innerHTML = `${rez.brSet1} - ${rez.brSet2}`;
-                         labeleRezultata[2].innerHTML = `(${rez.brPoenaSeta1prvog} - ${rez.brPoenaSeta1drugog}) , (${rez.brPoenaSeta2prvog} - ${rez.brPoenaSeta2drugog})`;
 
-            }
+                    if(data.rezultat !== null)
+                    {
+                        let podaci = igraci[0].querySelectorAll(".podaci");
+                        let slika = igraci[0].querySelector(".picture");
+                        podaci[0].innerHTML = data.rezultat.igrac1.imePrezime;
+                        podaci[1].innerHTML = data.rezultat.igrac1.godine;
+                        podaci[2].innerHTML = data.rezultat.igrac1.rang;
+                        slika.src = `slike/${data.rezultat.igrac1.imePrezime}.jpg`;
+                        inime[0].placeholder = data.rezultat.igrac1.imePrezime;
+                        ingod[0].placeholder = data.rezultat.igrac1.godine;
+                        inrang[0].placeholder = data.rezultat.igrac1.rang;
+                        
+                        podaci = igraci[1].querySelectorAll(".podaci");
+                        slika = igraci[1].querySelector(".picture");
+                        podaci[0].innerHTML = data.rezultat.igrac2.imePrezime;
+                        podaci[1].innerHTML = data.rezultat.igrac2.godine;
+                        podaci[2].innerHTML = data.rezultat.igrac2.rang;
+                        slika.src = `slike/${data.rezultat.igrac2.imePrezime}.jpg`;
+                        inime[1].placeholder = data.rezultat.igrac2.imePrezime;
+                        ingod[1].placeholder = data.rezultat.igrac2.godine;
+                        inrang[1].placeholder = data.rezultat.igrac2.rang;
+                        
+                        var rez = new Rezultat(data.rezultat.brSet1,data.rezultat.brSet2,data.rezultat.brPoenaSeta1prvog,data.rezultat.brPoenaSeta1drugog,data.rezultat.brPoenaSeta2prvog,data.rezultat.brPoenaSeta2drugog);
+                    
+                        if(data.rezultat.krajMeca){
+                            labelePoena[1].innerHTML = `---`;
+                            labeleRezultata[1].innerHTML = `${rez.brSet1} - ${rez.brSet2}`;
+                            labeleRezultata[2].innerHTML = `(${rez.brPoenaSeta1prvog} - ${rez.brPoenaSeta1drugog}) , (${rez.brPoenaSeta2prvog} - ${rez.brPoenaSeta2drugog})`;
+                        }
+                        else {
+                            if(data.rezultat.trenutniSet == 1){
+                            labelePoena[1].innerHTML = `${rez.brPoenaSeta1prvog} - ${rez.brPoenaSeta1drugog}`;
+                            labeleRezultata[1].innerHTML = `${rez.brSet1} - ${rez.brSet2}`;
+                            labeleRezultata[2].innerHTML = `(${rez.brPoenaSeta1prvog} - ${rez.brPoenaSeta1drugog})`;
+                        }
+                        else {
+                            labelePoena[1].innerHTML = `${rez.brPoenaSeta2prvog} - ${rez.brPoenaSeta2drugog}`;
+                            labeleRezultata[1].innerHTML = `${rez.brSet1} - ${rez.brSet2}`;
+                            labeleRezultata[2].innerHTML = `(${rez.brPoenaSeta1prvog} - ${rez.brPoenaSeta1drugog}) , (${rez.brPoenaSeta2prvog} - ${rez.brPoenaSeta2drugog})`;
+                            }
+                        }
+                        rez.SetPomocniKraj(true);
+                        
+                    }
+                    else
+                    {
+
+                    }
+                    
+             });
+         });
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
-                    //rez.postaviRezultat(rez.brSet1,rez.brSet2,rez.brPoenaSeta1prvog,rez.brPoenaSeta1drugog,rez.brPoenaSeta2prvog,rez.brPoenaSeta2drugog);
-                    
-                    
-                });
-            });    
-       }
 
     izbrisiMec(sel)
     {
         let id = sel.options[sel.selectedIndex].value;
         var nekisel = this.container.querySelector(".selmec");
         fetch("https://localhost:5001/TeniskiMec/IzbrisiMec/"+id,{
-            method: 'DELETE',
-            headers:{
-                "Content-Type":"application/json"
-            },
-        }).then(p => { p.json().then(data => {
-                var opcije = nekisel.children;
-                opcije.forEach(element => {
-                if(element.value == id)
-                    nekisel.removeChild(element);
-                    sel.removeChild(element);
-                });
+            method: 'DELETE'
+        }).then(p => {
+                if(p.ok)
+                {
+                    var opcijeR = nekisel.childNodes;
+                    var opcijeD = sel.childNodes;
+                    for (let index = 0; index < opcijeR.length; index++) {
+                        if(sel.options.value == id){
+                            nekisel.removeChild(element);
+                        }   
+                    }
+                    for (let index = 0; index < opcijeD.length; index++) {
+                        if(sel.options.value == id){
+                            sel.removeChild(element);
+                        }   
+                    }
+                    alert("Mec obrisan");
+                }
             });
-        });
+            // console.log(nekisel);
+            // console.log(sel);
+        
         
     }
 
-    azurirajOpcijeD(neb)
+   /* azurirajOpcijeD(neb)
     {
-        fetch("https://localhost:5001/TeniskiMec/VratiMeceve").then(p => {
+        var opcije = neb.children;
+        for (let index = 0; index < opcije.length; index++) {
+            
+            
+        }
+    }
+*/
+    /*
+    fetch("https://localhost:5001/TeniskiMec/VratiMeceve").then(p => {
              p.json().then(data => {
                   data.forEach(mec => {
                      var opcija = document.createElement("option");
@@ -398,7 +404,6 @@ export class Mec {
                });
           });
         });
-    }
 
     /*
      izbrisiMec(sel)
@@ -422,7 +427,7 @@ export class Mec {
             })
         
     }
-*/
+
     azurirajOpcijeR(neb)
     {
         fetch("https://localhost:5001/TeniskiMec/VratiMeceve").then(p => {
@@ -438,6 +443,7 @@ export class Mec {
           });
         });
     }
+*/
   /*  izabranIgrac(sel)
     {
         let id = sel.options[sel.selectedIndex].value;

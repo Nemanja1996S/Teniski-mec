@@ -204,13 +204,20 @@ export class Igrac
                     imePrezime:privremenoIme,
                     godine:privremeneGodine
                 })
+            }).then(p => {
+                if(p.ok){
+                    this.ime = privremenoIme;
+                    this.godine = privremeneGodine;
+                    this.rang = privremenRang;
+                    nizLabela[0].innerHTML = this.ime;
+                    nizLabela[1].innerHTML = this.godine;
+                    nizLabela[2].innerHTML = this.rang;
+                    alert("Igrac izmenjen");
+                }
+                else
+                    alert("Greska");
             });
-            this.ime = privremenoIme;
-            this.godine = privremeneGodine;
-            this.rang = privremenRang;
-            nizLabela[0].innerHTML = this.ime;
-            nizLabela[1].innerHTML = this.godine;
-            nizLabela[2].innerHTML = this.rang;
+            
         }  
         //console.log(privremenoIme.match("^[A-Za-z]{1,30}"));
         //console.log(isNaN(privremeneGodine));
