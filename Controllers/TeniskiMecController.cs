@@ -169,6 +169,23 @@ namespace projekat.Controllers
             await Context.SaveChangesAsync();
         }
 
+        [Route("IzmeniRezultat/{mecid}")]
+        [HttpPut]
+        public async Task IzmeniRezultat (int mecid, [FromBody] Rezultat rezultat){
+            var mec = await Context.Mecevi.Where(m => m.ID == mecid).Include(m => m.Rezultat).Include(m => m.Rezultat.Igrac1).Include(m => m.Rezultat.Igrac2).FirstAsync();
+            mec.Rezultat.BrSet1 = rezultat.BrSet1;
+            mec.Rezultat.BrSet2 = rezultat.BrSet2;
+            mec.Rezultat.BrPoenaSeta1prvog = rezultat.BrPoenaSeta1prvog;
+            mec.Rezultat.BrPoenaSeta1drugog = rezultat.BrPoenaSeta1drugog;
+            mec.Rezultat.BrPoenaSeta2prvog = rezultat.BrPoenaSeta2prvog;
+            mec.Rezultat.BrPoenaSeta2drugog = rezultat.BrPoenaSeta2drugog;
+            mec.Rezultat.TrenutniSet = rezultat.TrenutniSet;
+            mec.Rezultat.KrajMeca = rezultat.KrajMeca;
+            Context.Update<Rezultat>(rezultat);
+            Context.Update<Mec>(mec);
+            await Context.SaveChangesAsync();
+        }
+
         [Route("VratiRezultate")]
         [HttpGet]
         public async Task<List<Rezultat>> VratiRezultate()
