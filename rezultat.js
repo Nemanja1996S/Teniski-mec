@@ -80,7 +80,7 @@ export class Rezultat
                     if(this.trenutniSet == 2){
                         this.brPoenaSeta2prvog++;
                         if(this.brPoenaSeta2prvog > 5){
-                            this.brPoenaSetaprvog = 6;
+                            this.brPoenaSeta2prvog = 6;
                             this.brSet1++;
                             this.krajMeca = true;
                             this.snimiMec();
@@ -113,7 +113,7 @@ export class Rezultat
                     if(this.trenutniSet == 2){
                         this.brPoenaSeta2drugog++;
                         if(this.brPoenaSeta2drugog > 5){
-                            this.brPoenaSeta1drugog = 6;
+                            this.brPoenaSeta2drugog = 6;
                             this.brSet2++;
                             this.krajMeca = true;
                             this.snimiMec();
